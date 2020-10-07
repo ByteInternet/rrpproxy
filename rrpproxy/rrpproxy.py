@@ -1,3 +1,4 @@
+import re
 from urllib import parse
 import requests
 
@@ -30,7 +31,13 @@ class RRPProxy:
         for response_line in response_text.splitlines():
             key = response_line.split('=')[0].strip()
             value = response_line.split('=')[1].strip()
-            response_dict[key] = value
+            if 'property[' in key:
+                property_key = re.search(r"property\[([A-Za-z0-9_]+)\]", key).group(1)
+                if 'property' not in response_dict: response_dict['property'] = {}
+                if property_key not in response_dict['property']: response_dict['property'][property_key] = []
+                response_dict['property'][property_key].append(value)
+            else:
+                response_dict[key] = value
         return response_dict
 
     def add_domain(self, domain, period, **domain_data):
