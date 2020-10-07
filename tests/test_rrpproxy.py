@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 from rrpproxy import RRPProxy
 
 
-class TestRRRPProxy(TestCase):
+class TestRRPProxy(TestCase):
     def setUp(self):
         self.get_mock = self.set_up_patch('requests.get')
         self.username = 'dummy_username'
@@ -26,10 +26,38 @@ class TestRRRPProxy(TestCase):
         self.assertEqual(self.proxy.api_url,
                          'https://api.rrpproxy.net/api/call.cgi?s_login={}&s_pw={}'.format(self.username, self.password))
 
-    def test_call_calls_request_get_with_correct_url(self):
-        self.proxy.call('CheckDomain', some_parameter='some_value')
+    @patch('urllib.parse.urlparse')
+    def test_call_calls_urlparse_with_api_url(self, urlparse_mock):
+        urlparse_mock.return_value = ('', '', '', '', '', '')
 
-        self.get_mock.assert_called_once_with(self.proxy.api_url + '&some_parameter=some_value&command=CheckDomain')
+        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
+
+        urlparse_mock.assert_called_once_with(self.proxy.api_url)
+
+    @patch('urllib.parse.parse_qsl')
+    def test_call_calls_parse_qsl_with_query_parameters(self, parse_qsl_mock):
+        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
+
+        parse_qsl_mock.assert_called_once_with('s_login={}&s_pw={}&s_opmode=OTE'.format(self.username, self.password))
+
+    @patch('urllib.parse.urlencode')
+    def test_calls_encodes_url_with_constructor_parameters_and_function_parameters(self, urlencode_mock):
+        urlencode_mock.return_value = 'http://dummy_url'
+        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
+
+        urlencode_mock.assert_called_once_with({
+            's_login': self.username,
+            's_pw': self.password,
+            's_opmode': 'OTE',
+            'some_parameter': 'some_value',
+            'encoded_param': 'enc*d*d!',
+            'command': 'CheckDomain'
+        })
+
+    def test_call_calls_request_get_with_correct_url(self):
+        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
+
+        self.get_mock.assert_called_once_with(self.proxy.api_url + '&some_parameter=some_value&encoded_param=enc%2Ad%2Ad%21&command=CheckDomain')
 
     @patch('rrpproxy.RRPProxy.response_to_dict')
     def test_call_returns_response_to_dict(self, response_to_dict_mock):

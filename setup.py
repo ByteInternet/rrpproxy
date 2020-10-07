@@ -9,14 +9,14 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='rrpproxy',
-    version='0.1',
+    version='0.0.1',
     packages=find_packages(),
     include_package_data=True,
     description='A python connector for RRP Proxy',
     long_description=README,
     author='Tech',
     author_email='tech@byte.nl',
-    python_requires='>=3.6',
+    python_requires='>=3.4',
     classifiers=[
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',

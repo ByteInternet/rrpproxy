@@ -4,11 +4,11 @@ import requests
 
 
 class RRPProxy:
-    def __init__(self, username, password, is_test=False):
+    def __init__(self, username, password, use_test_environment=False):
         credential_parameters = 's_login={}&s_pw={}'.format(username, password)
-        self.api_url = 'https://{}.rrpproxy.net/api/call.cgi?{}'.format('api-ote' if is_test else 'api',
+        self.api_url = 'https://{}.rrpproxy.net/api/call.cgi?{}'.format('api-ote' if use_test_environment else 'api',
                                                                         credential_parameters)
-        if is_test:
+        if use_test_environment:
             self.api_url += '&s_opmode=OTE'
 
     def call(self, command, **data):
