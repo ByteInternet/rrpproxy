@@ -1,15 +1,19 @@
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch
 
+import requests
+
 from rrpproxy import RRPProxy
+from rrpproxy.utils.rrpproxy_api_down_exception import RRPProxyAPIDownException
 
 
 class TestRRPProxy(TestCase):
     def setUp(self):
         self.get_mock = self.set_up_patch('requests.get')
+        self.logger_mock = self.set_up_patch('rrpproxy.rrpproxy.logger')
         self.username = 'dummy_username'
         self.password = 'secret_password'
-        self.proxy = RRPProxy(self.username, self.password, True)
+        self.proxy = RRPProxy(self.username, self.password, use_test_environment=True)
 
     def set_up_patch(self, name, *args, **kwargs):
         patch = mock.patch(name, *args, **kwargs)
@@ -33,6 +37,24 @@ class TestRRPProxy(TestCase):
         self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
 
         self.get_mock.assert_called_once_with(self.proxy.api_url, params=query_params)
+
+    def test_call_calls_response_raise_for_status(self):
+        self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
+
+        self.get_mock.return_value.raise_for_status.assert_called_once_with()
+
+    def test_call_raises_rrpproxy_api_down_exception_when_there_is_a_connection_error(self):
+        self.get_mock.side_effect = requests.ConnectionError
+
+        with self.assertRaises(RRPProxyAPIDownException):
+            self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
+
+    def test_call_logs_http_error_with_exception_if_api_returns_http_error(self):
+        self.get_mock.side_effect = requests.HTTPError
+
+        self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
+
+        self.logger_mock.error.assert_called_once_with('Error returned from API Call', exc_info=True)
 
     @patch('rrpproxy.RRPProxy.response_to_dict')
     def test_call_returns_response_to_dict(self, response_to_dict_mock):

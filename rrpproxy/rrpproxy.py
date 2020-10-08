@@ -1,5 +1,10 @@
+import logging
 import re
 import requests
+
+from rrpproxy.utils.rrpproxy_api_down_exception import RRPProxyAPIDownException
+
+logger = logging.getLogger(__name__)
 
 
 class RRPProxy:
@@ -23,9 +28,14 @@ class RRPProxy:
         query_dict.update(data)
         query_dict['command'] = command
 
-        response = requests.get(self.api_url, params=query_dict)
-
-        return self.response_to_dict(response.text)
+        try:
+            response = requests.get(self.api_url, params=query_dict)
+            response.raise_for_status()
+            return self.response_to_dict(response.text)
+        except requests.ConnectionError:
+            raise RRPProxyAPIDownException
+        except requests.HTTPError:
+            logger.error('Error returned from API Call', exc_info=True)
 
     def response_to_dict(self, response_text):
         """This function translates response text into a dict"""
