@@ -1,26 +1,29 @@
 import re
-from urllib import parse
 import requests
 
 
 class RRPProxy:
     def __init__(self, username, password, use_test_environment=False):
-        credential_parameters = 's_login={}&s_pw={}'.format(username, password)
-        self.api_url = 'https://{}.rrpproxy.net/api/call.cgi?{}'.format('api-ote' if use_test_environment else 'api',
-                                                                        credential_parameters)
+        self.query_params = {
+            's_login': username,
+            's_pw': password
+        }
+        environment = 'api'
+
         if use_test_environment:
-            self.api_url += '&s_opmode=OTE'
+            environment = 'api-ote'
+            self.query_params['s_opmode'] = 'OTE'
+
+        self.api_url = 'https://{}.rrpproxy.net/api/call.cgi'.format(environment)
 
     def call(self, command, **data):
         """This function will perform the API call"""
-        scheme, netloc, path, params, query, fragment = parse.urlparse(self.api_url)
+        query_dict = self.query_params.copy()
 
-        query_dict = dict(parse.parse_qsl(query))
-        query_dict.update({**data, **{'command': command}})
-        query = parse.urlencode(query_dict)
+        query_dict.update(data)
+        query_dict['command'] = command
 
-        url = parse.urlunparse((scheme, netloc, path, params, query, fragment))
-        response = requests.get(url)
+        response = requests.get(self.api_url, params=query_dict)
 
         return self.response_to_dict(response.text)
 

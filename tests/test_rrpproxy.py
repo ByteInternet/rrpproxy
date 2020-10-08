@@ -16,48 +16,23 @@ class TestRRPProxy(TestCase):
         self.addCleanup(patch.stop)
         return patch.start()
 
-    def test_init_sets_correct_api_url_when_using_sandbox_environment(self):
-        self.assertEqual(self.proxy.api_url,
-                         'https://api-ote.rrpproxy.net/api/call.cgi?s_login={}&s_pw={}&s_opmode=OTE'.format(self.username, self.password))
+    def test_init_sets_correct_api_url_and_query_params_when_using_sandbox_environment(self):
+        self.assertEqual(self.proxy.api_url, 'https://api-ote.rrpproxy.net/api/call.cgi')
+        self.assertEqual(self.proxy.query_params, {'s_login': self.username, 's_pw': self.password, 's_opmode': 'OTE'})
 
-    def test_init_sets_correct_api_url_when_using_live_environment(self):
+    def test_init_sets_correct_api_url_and_query_params_when_using_live_environment(self):
         self.proxy = RRPProxy(self.username, self.password, False)
 
-        self.assertEqual(self.proxy.api_url,
-                         'https://api.rrpproxy.net/api/call.cgi?s_login={}&s_pw={}'.format(self.username, self.password))
+        self.assertEqual(self.proxy.api_url, 'https://api.rrpproxy.net/api/call.cgi')
+        self.assertEqual(self.proxy.query_params, {'s_login': self.username, 's_pw': self.password})
 
-    @patch('urllib.parse.urlparse')
-    def test_call_calls_urlparse_with_api_url(self, urlparse_mock):
-        urlparse_mock.return_value = ('', '', '', '', '', '')
+    def test_call_calls_request_get_with_correct_url_and_parameters(self):
+        query_params = self.proxy.query_params.copy()
+        query_params.update({'some_parameter': 'some_value', 'other_parameter': 'other_value', 'command': 'CheckDomain'})
 
-        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
+        self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
 
-        urlparse_mock.assert_called_once_with(self.proxy.api_url)
-
-    @patch('urllib.parse.parse_qsl')
-    def test_call_calls_parse_qsl_with_query_parameters(self, parse_qsl_mock):
-        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
-
-        parse_qsl_mock.assert_called_once_with('s_login={}&s_pw={}&s_opmode=OTE'.format(self.username, self.password))
-
-    @patch('urllib.parse.urlencode')
-    def test_calls_encodes_url_with_constructor_parameters_and_function_parameters(self, urlencode_mock):
-        urlencode_mock.return_value = 'http://dummy_url'
-        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
-
-        urlencode_mock.assert_called_once_with({
-            's_login': self.username,
-            's_pw': self.password,
-            's_opmode': 'OTE',
-            'some_parameter': 'some_value',
-            'encoded_param': 'enc*d*d!',
-            'command': 'CheckDomain'
-        })
-
-    def test_call_calls_request_get_with_correct_url(self):
-        self.proxy.call('CheckDomain', some_parameter='some_value', encoded_param='enc*d*d!')
-
-        self.get_mock.assert_called_once_with(self.proxy.api_url + '&some_parameter=some_value&encoded_param=enc%2Ad%2Ad%21&command=CheckDomain')
+        self.get_mock.assert_called_once_with(self.proxy.api_url, params=query_params)
 
     @patch('rrpproxy.RRPProxy.response_to_dict')
     def test_call_returns_response_to_dict(self, response_to_dict_mock):
