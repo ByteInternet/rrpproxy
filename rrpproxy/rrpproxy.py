@@ -22,7 +22,6 @@ class RRPProxy:
         self.api_url = 'https://{}.rrpproxy.net/api/call.cgi'.format(environment)
 
     def call(self, command, **data):
-        """This function will perform the API call"""
         query_dict = self.query_params.copy()
 
         query_dict.update(data)
@@ -38,7 +37,6 @@ class RRPProxy:
             logger.error('Error returned from API Call', exc_info=True)
 
     def response_to_dict(self, response_text):
-        """This function translates response text into a dict"""
         response_text = response_text.replace('[RESPONSE]\n', '').replace('EOF\n', '')
         response_dict = {}
         for response_line in response_text.splitlines():
