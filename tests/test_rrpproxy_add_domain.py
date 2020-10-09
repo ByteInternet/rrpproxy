@@ -4,6 +4,9 @@ from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
 class TestRRPProxyAddDomain(TestRRPProxyBase):
+    def setup(self):
+        super().setUp()
+
     @patch('rrpproxy.RRPProxy.call')
     def test_calls_call_correctly(self, call_mock):
         response = self.proxy.add_domain('example.com', 1, ownerContact0='ABC')

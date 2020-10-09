@@ -66,69 +66,19 @@ class RRPProxy:
         """Allows you to add a new contact. System automatically substitutes existing handles."""
         return self.call('AddContact', **contact_data)
 
-    def check_contact(self, contact):
-        """Check availability of a contact"""
-        return self.call('CheckContact', contact=contact)
-
     def check_domain(self, domain):
         """Checks if the desired domain name is available and may be registered at the registry"""
         return self.call('CheckDomain', domain=domain)
 
-    def check_domain_transfer(self, domain, **transfer_data):
-        """Check transfer requirements of particular gTLDs"""
-        return self.call('CheckDomainTransfer', domain=domain, **transfer_data)
-
     def delete_domain(self, domain):
-        """The command is used to request the deletion of the domain"""
         return self.call('DeleteDomain', domain=domain)
 
-    def delete_contact(self, contact):
-        """Delete a contact"""
-        return self.call('DeleteContact', contact=contact)
-
-    def get_zone_info(self, zone, domain):
-        """Query information about a zone"""
-        return self.call('GetZoneInfo', zone=zone, domain=domain)
-
-    def modify_contact(self, contact, **contact_data):
-        """Modify a contact handle"""
-        return self.call('ModifyContact', contact=contact, **contact_data)
-
     def modify_domain(self, domain, **domain_data):
-        """Modify domain data"""
         return self.call('ModifyDomain', domain=domain, **domain_data)
 
     def renew_domain(self, domain, **domain_data):
-        """Command used to renew domains explicitly for a specified period of time"""
         return self.call('RenewDomain', domain=domain, **domain_data)
-
-    def resend_notification(self, type, object, **extra_data):
-        return self.call('ResendNotification', type=type, object=object, **extra_data)
-
-    def set_auth_code(self, domain, **extra_data):
-        return self.call('SetAuthCode', domain=domain, **extra_data)
-
-    def set_domain_renewal_mode(self, domain, token, renewalmode):
-        return self.call('SetDomainRenewalmode', domain=domain, token=token, renewalmode=renewalmode)
-
-    def status_contact(self, contact, auth):
-        return self.call('StatusContact', contact=contact, auth=auth)
 
     def status_domain(self, domain):
         """Enables you to check the actual status of a Domain in your portfolio"""
         return self.call('StatusDomain', domain=domain)
-
-    def status_domain_transfer(self, domain):
-        return self.call('StatusDomainTransfer', domain=domain)
-
-    def trade_domain(self, domain, **trade_data):
-        """Change registrant of a domain"""
-        return self.call('TradeDomain', domain=domain, **trade_data)
-
-    def transfer_domain(self, domain, action, **transfer_data):
-        """This command allows you to request, approve, deny or cancel a domain transfer."""
-        return self.call('TransferDomain', domain=domain, action=action, **transfer_data)
-
-    def query_zone_list(self):
-        """Query list of activated zones in account"""
-        return self.call('QueryZoneList')

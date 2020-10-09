@@ -4,6 +4,9 @@ from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
 class TestRRPProxyRenewDomain(TestRRPProxyBase):
+    def setup(self):
+        super().setUp()
+
     @patch('rrpproxy.RRPProxy.call')
     def test_calls_call_correctly(self, call_mock):
         response = self.proxy.renew_domain('example.com', period=5, expiration=2025)

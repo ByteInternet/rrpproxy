@@ -4,6 +4,9 @@ from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
 class TestRRPProxyResponseToDict(TestRRPProxyBase):
+    def setUp(self):
+        super().setUp()
+
     def test_response_to_dict_returns_a_dict_of_each_line_of_response_without_response_line_and_eof(self):
         self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 210\ndescription = Domain name available\nruntime = 0.267\nqueuetime = 0\nEOF\n')
 
