@@ -1,0 +1,2 @@
+class RRPProxyAPIDownException(Exception):
+    pass
