@@ -4,9 +4,6 @@ from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
 class TestRRPProxyStatusDomain(TestRRPProxyBase):
-    def setup(self):
-        super().setUp()
-
     @patch('rrpproxy.RRPProxy.call')
     def test_calls_call_correctly(self, call_mock):
         response = self.proxy.status_domain('example.com')
