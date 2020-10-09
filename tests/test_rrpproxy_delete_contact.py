@@ -3,10 +3,10 @@ from unittest.mock import patch
 from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
-class TestRRPProxyCheckDomain(TestRRPProxyBase):
+class TestRRPProxyDeleteContact(TestRRPProxyBase):
     @patch('rrpproxy.RRPProxy.call')
     def test_calls_call_correctly(self, call_mock):
-        response = self.proxy.check_domain('example.com')
+        response = self.proxy.delete_contact('CONTACT-B')
 
-        call_mock.assert_called_once_with('CheckDomain', domain='example.com')
+        call_mock.assert_called_once_with('DeleteContact', contact='CONTACT-B')
         self.assertEqual(response, call_mock.return_value)
