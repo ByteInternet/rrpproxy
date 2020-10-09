@@ -7,9 +7,6 @@ from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
 class TestRRPProxyCall(TestRRPProxyBase):
-    def setUp(self):
-        super().setUp()
-
     def test_call_calls_request_get_with_correct_url_and_parameters(self):
         query_params = self.proxy.query_params.copy()
         query_params.update({'some_parameter': 'some_value', 'other_parameter': 'other_value', 'command': 'CheckDomain'})
