@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='rrpproxy',
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(),
     include_package_data=True,
     description='A python connector for RRP Proxy',
@@ -18,7 +18,7 @@ setup(
     author='Tech',
     author_email='tech@byte.nl',
     url='https://github.com/ByteInternet/rrpproxy',
-    download_url='https://github.com/ByteInternet/rrpproxy/archive/20201009.1.tar.gz',
+    download_url='https://github.com/ByteInternet/rrpproxy/archive/20201012.1.tar.gz',
     python_requires='>=3.4',
     classifiers=[
         'Intended Audience :: Developers',
