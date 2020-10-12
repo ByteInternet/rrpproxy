@@ -14,8 +14,11 @@ setup(
     include_package_data=True,
     description='A python connector for RRP Proxy',
     long_description=README,
+    long_description_content_type="text/markdown",
     author='Tech',
     author_email='tech@byte.nl',
+    url='https://github.com/ByteInternet/rrpproxy',
+    download_url='https://github.com/ByteInternet/rrpproxy/archive/20201009.1.tar.gz',
     python_requires='>=3.4',
     classifiers=[
         'Intended Audience :: Developers',
