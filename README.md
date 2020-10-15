@@ -7,6 +7,16 @@ A python connector for RRP Proxy
 from rrpproxy import RRPProxy
 proxy = RRPProxy('username', 'password')
 ```
+ 
+RRPProxy advises to use long standing connections. If you want to re-use the same Session:
+
+```
+import requests
+from rrpproxy import RRPProxy
+
+session = requests.Session()
+proxy = RRPProxy('username', 'password', session=session)
+```
 
 ## connect to sandbox
 ```

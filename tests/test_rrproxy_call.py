@@ -7,18 +7,18 @@ from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
 class TestRRPProxyCall(TestRRPProxyBase):
-    def test_call_calls_request_get_with_correct_url_and_parameters(self):
+    def test_call_calls_session_get_with_correct_url_and_parameters(self):
         query_params = self.proxy.query_params.copy()
         query_params.update({'some_parameter': 'some_value', 'other_parameter': 'other_value', 'command': 'CheckDomain'})
 
         self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
 
-        self.get_mock.assert_called_once_with(self.proxy.api_url, params=query_params)
+        self.proxy.session.get.assert_called_once_with(self.proxy.api_url, params=query_params)
 
     def test_call_calls_response_raise_for_status(self):
         self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
 
-        self.get_mock.return_value.raise_for_status.assert_called_once_with()
+        self.proxy.session.get.return_value.raise_for_status.assert_called_once_with()
 
     def test_call_raises_rrpproxy_api_down_exception_when_there_is_a_connection_error(self):
         self.get_mock.side_effect = requests.ConnectionError

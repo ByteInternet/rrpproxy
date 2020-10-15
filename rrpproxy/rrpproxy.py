@@ -8,7 +8,11 @@ logger = logging.getLogger(__name__)
 
 
 class RRPProxy:
-    def __init__(self, username, password, use_test_environment=False):
+    def __init__(self, username, password, session=None, use_test_environment=False):
+        self.session = session
+        if not session:
+            self.session = requests
+
         self.query_params = {
             's_login': username,
             's_pw': password
@@ -28,7 +32,7 @@ class RRPProxy:
         query_dict['command'] = command
 
         try:
-            response = requests.get(self.api_url, params=query_dict)
+            response = self.session.get(self.api_url, params=query_dict)
             response.raise_for_status()
             return self.response_to_dict(response.text)
         except requests.ConnectionError:
