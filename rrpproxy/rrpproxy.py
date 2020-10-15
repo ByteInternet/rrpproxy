@@ -47,7 +47,7 @@ class RRPProxy:
             key = response_line.split('=')[0].strip()
             value = response_line.split('=')[1].strip()
             if 'property[' in key:
-                property_key = re.search(r"property\[([A-Za-z0-9_]+)\]", key).group(1)
+                property_key = re.search(r"property\[([A-Za-z0-9_ -]+)\]", key).group(1)
                 if 'property' not in response_dict:
                     response_dict['property'] = {}
                 if property_key not in response_dict['property']:
