@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class RRPProxy:
-    def __init__(self, username, password, use_test_environment=False, session=None):
+    def __init__(self, username, password, session=None, use_test_environment=False):
         self.session = session
         if not session:
             self.session = requests
