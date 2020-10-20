@@ -53,6 +53,8 @@ class RRPProxy:
                 if property_key not in response_dict['property']:
                     response_dict['property'][property_key] = []
                 response_dict['property'][property_key].append(value)
+            elif 'code' == key:
+                response_dict['code'] = int(value)
             else:
                 response_dict[key] = value
         return response_dict
