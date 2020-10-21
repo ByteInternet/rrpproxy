@@ -11,7 +11,7 @@ class TestRRPProxyResponseToDict(TestRRPProxyBase):
         response = self.proxy.call('CheckDomain', domain='hypernode.com')
 
         self.assertEqual(response, {
-            'code': '210',
+            'code': 210,
             'description': 'Domain name available',
             'runtime': '0.267',
             'queuetime': '0'
@@ -34,7 +34,7 @@ class TestRRPProxyResponseToDict(TestRRPProxyBase):
         response = self.proxy.call('Command', domain='hypernode.com')
 
         self.assertEqual(response, {
-            'code': '210',
+            'code': 210,
             'description': 'Domain name available',
             'property': {
                 'AMOUNT': ['100'],
