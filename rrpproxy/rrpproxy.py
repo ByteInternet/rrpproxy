@@ -2,6 +2,7 @@ import logging
 import re
 import requests
 
+from rrpproxy.utils.rrp_proxy_internal_status_exception import RRPProxyInternalStatusException
 from rrpproxy.utils.rrpproxy_api_down_exception import RRPProxyAPIDownException
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,12 @@ class RRPProxy:
         try:
             response = self.session.get(self.api_url, params=query_dict)
             response.raise_for_status()
-            return self.response_to_dict(response.text)
+            response_dict = self.response_to_dict(response.text)
+            if response_dict['code'] >= 400:
+                raise RRPProxyInternalStatusException(
+                    "Request was successfully handled, but RRP returned internal status code '{}'. Please investigate "
+                    "and handle accordingly.".format(response_dict['code']), code=response_dict['code'])
+            return response_dict
         except requests.ConnectionError:
             raise RRPProxyAPIDownException
         except requests.HTTPError:

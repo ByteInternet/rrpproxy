@@ -1,13 +1,18 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import requests
 from requests import HTTPError
 
+from rrpproxy.utils.rrp_proxy_internal_status_exception import RRPProxyInternalStatusException
 from rrpproxy.utils.rrpproxy_api_down_exception import RRPProxyAPIDownException
 from tests.test_rrpproxy_base import TestRRPProxyBase
 
 
 class TestRRPProxyCall(TestRRPProxyBase):
+    def setUp(self):
+        super(TestRRPProxyCall, self).setUp()
+        self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 200\nEOF\n')
+
     def test_call_calls_session_get_with_correct_url_and_parameters(self):
         query_params = self.proxy.query_params.copy()
         query_params.update({'some_parameter': 'some_value', 'other_parameter': 'other_value', 'command': 'CheckDomain'})
@@ -37,7 +42,31 @@ class TestRRPProxyCall(TestRRPProxyBase):
 
     @patch('rrpproxy.RRPProxy.response_to_dict')
     def test_call_returns_response_to_dict(self, response_to_dict_mock):
+        response_to_dict_mock.return_value = {'code': 200}
+
         response = self.proxy.call('CheckDomain', domain='hypernode.com')
 
         response_to_dict_mock.assert_called_once_with(self.get_mock.return_value.text)
         self.assertEqual(response, response_to_dict_mock.return_value)
+
+    def test_raises_rrp_proxy_internal_status_exception_if_code_is_400(self):
+        self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 400\nEOF\n')
+
+        with self.assertRaises(RRPProxyInternalStatusException) as cm:
+            self.proxy.call('CheckDomain', domain='hypernode.com')
+
+        self.assertEqual(cm.exception.code, 400)
+
+    def test_raises_rrp_proxy_internal_status_exception_if_code_is_higher_than_400(self):
+        self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 401\nEOF\n')
+
+        with self.assertRaises(RRPProxyInternalStatusException) as cm:
+            self.proxy.call('CheckDomain', domain='hypernode.com')
+
+        self.assertEqual(cm.exception.code, 401)
+
+    def test_does_not_raise_rrp_proxy_internal_status_exception_if_code_is_lower_than_400(self):
+        self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 399\nEOF\n')
+
+        # Should not raise
+        self.proxy.call('CheckDomain', domain='hypernode.com')
