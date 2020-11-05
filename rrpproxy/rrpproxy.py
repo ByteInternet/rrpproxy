@@ -39,7 +39,7 @@ class RRPProxy:
             if response_dict['code'] >= 400:
                 raise RRPProxyInternalStatusException(
                     "Request was successfully handled, but RRP returned internal status code '{}'. Please investigate "
-                    "and handle accordingly.".format(response_dict['code']), code=response_dict['code'])
+                    "and handle accordingly.".format(response_dict['code']), response_dict=response_dict)
             return response_dict
         except requests.ConnectionError:
             raise RRPProxyAPIDownException
