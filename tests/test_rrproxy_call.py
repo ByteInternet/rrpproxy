@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import requests
+from requests import HTTPError
 
 from rrpproxy.utils.rrpproxy_api_down_exception import RRPProxyAPIDownException
 from tests.test_rrpproxy_base import TestRRPProxyBase
@@ -29,7 +30,8 @@ class TestRRPProxyCall(TestRRPProxyBase):
     def test_call_logs_http_error_with_exception_if_api_returns_http_error(self):
         self.get_mock.side_effect = requests.HTTPError
 
-        self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
+        with self.assertRaises(HTTPError):
+            self.proxy.call('CheckDomain', some_parameter='some_value', other_parameter='other_value')
 
         self.logger_mock.error.assert_called_once_with('Error returned from API Call', exc_info=True)
 

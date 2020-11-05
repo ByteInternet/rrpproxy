@@ -39,6 +39,7 @@ class RRPProxy:
             raise RRPProxyAPIDownException
         except requests.HTTPError:
             logger.error('Error returned from API Call', exc_info=True)
+            raise
 
     def response_to_dict(self, response_text):
         response_text = response_text.replace('[RESPONSE]\n', '').replace('EOF\n', '')
