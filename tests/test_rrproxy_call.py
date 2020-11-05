@@ -55,7 +55,7 @@ class TestRRPProxyCall(TestRRPProxyBase):
         with self.assertRaises(RRPProxyInternalStatusException) as cm:
             self.proxy.call('CheckDomain', domain='hypernode.com')
 
-        self.assertEqual(cm.exception.code, 400)
+        self.assertCountEqual(cm.exception.response_dict, {'code': 400})
 
     def test_raises_rrp_proxy_internal_status_exception_if_code_is_higher_than_400(self):
         self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 401\nEOF\n')
@@ -63,7 +63,7 @@ class TestRRPProxyCall(TestRRPProxyBase):
         with self.assertRaises(RRPProxyInternalStatusException) as cm:
             self.proxy.call('CheckDomain', domain='hypernode.com')
 
-        self.assertEqual(cm.exception.code, 401)
+        self.assertCountEqual(cm.exception.response_dict, {'code': 401})
 
     def test_does_not_raise_rrp_proxy_internal_status_exception_if_code_is_lower_than_400(self):
         self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 399\nEOF\n')
