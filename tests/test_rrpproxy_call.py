@@ -54,7 +54,9 @@ class TestRRPProxyCall(TestRRPProxyBase):
 
         with self.assertRaises(RRPProxyInternalStatusException) as cm:
             self.proxy.call('CheckDomain', domain='hypernode.com')
-
+        self.maxDiff=None
+        self.assertEqual(cm.exception.args[0], ("Request was successfully handled, but RRP returned internal status "
+                                                "code '400'. Please investigate and handle accordingly.",))
         self.assertCountEqual(cm.exception.response_dict, {'code': 400})
 
     def test_raises_rrp_proxy_internal_status_exception_if_code_is_higher_than_400(self):
@@ -63,7 +65,20 @@ class TestRRPProxyCall(TestRRPProxyBase):
         with self.assertRaises(RRPProxyInternalStatusException) as cm:
             self.proxy.call('CheckDomain', domain='hypernode.com')
 
+        self.assertEqual(cm.exception.args[0], ("Request was successfully handled, but RRP returned internal status "
+                                                "code '401'. Please investigate and handle accordingly.",))
         self.assertCountEqual(cm.exception.response_dict, {'code': 401})
+
+    def test_raises_rrp_proxy_internal_status_exception_with_error_description_if_available(self):
+        self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 400\ndescription = my error\nEOF\n')
+
+        with self.assertRaises(RRPProxyInternalStatusException) as cm:
+            self.proxy.call('CheckDomain', domain='hypernode.com')
+
+        self.assertEqual(cm.exception.args[0], ("Request was successfully handled, but RRP returned internal status "
+                                                "code '400'. Please investigate and handle accordingly. Description: "
+                                                "my error",))
+        self.assertCountEqual(cm.exception.response_dict, {'code': 400, 'description': 'my error'})
 
     def test_does_not_raise_rrp_proxy_internal_status_exception_if_code_is_lower_than_400(self):
         self.get_mock.return_value = MagicMock(text='[RESPONSE]\ncode = 399\nEOF\n')
