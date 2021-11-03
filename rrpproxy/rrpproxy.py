@@ -146,6 +146,14 @@ class RRPProxy:
         """Query list of domains in account."""
         return self.call('QueryDomainList', **query_domain_data)
 
+    def query_transfer_list(self, **query_transfer_data):
+        """Query a list of incoming (running) domain transfers from an external registrar"""
+        return self.call('QueryTransferList', **query_transfer_data)
+
+    def query_foreign_transfer_list(self, **query_transfer_data):
+        """Query a list of all domain which are currently in a transfer-out process"""
+        return self.call('QueryForeignTransferList', **query_transfer_data)
+
     def query_zone_list(self):
         """Query list of activated zones in account"""
         return self.call('QueryZoneList')
