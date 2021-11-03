@@ -142,6 +142,10 @@ class RRPProxy:
         """This command allows you to request, approve, deny or cancel a domain transfer."""
         return self.call('TransferDomain', domain=domain, action=action, **transfer_data)
 
+    def query_domain_list(self, **query_domain_data):
+        """Query list of domains in account."""
+        return self.call('QueryDomainList', **query_domain_data)
+
     def query_zone_list(self):
         """Query list of activated zones in account"""
         return self.call('QueryZoneList')
