@@ -1,6 +1,7 @@
 import logging
 import re
 import requests
+import time
 
 from rrpproxy.utils.rrp_proxy_internal_status_exception import RRPProxyInternalStatusException
 from rrpproxy.utils.rrpproxy_api_down_exception import RRPProxyAPIDownException
@@ -157,3 +158,13 @@ class RRPProxy:
     def query_zone_list(self):
         """Query list of activated zones in account"""
         return self.call('QueryZoneList')
+
+    def get_domain_list_from_account(self, index=0):
+        """Returns list of domains registered in your account"""
+        domain_list = self.query_domain_list(first=index)
+        next_index = domain_list['property']['last'][0] + 1
+        if domain_list['property']['total'][0] < next_index:
+            return domain_list['property']['domain'] if 'domain' in domain_list['property'] else []
+        else:
+            time.sleep(1)
+            return domain_list['property']['domain'] + self.get_domain_list_from_account(index=next_index)
