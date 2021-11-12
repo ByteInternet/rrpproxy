@@ -159,12 +159,15 @@ class RRPProxy:
         """Query list of activated zones in account"""
         return self.call('QueryZoneList')
 
-    def get_domain_list_from_account(self, index=0):
+    def get_domain_list_from_account(self, index=0, time_between_calls_in_seconds=1):
         """Returns list of domains registered in your account"""
         domain_list = self.query_domain_list(first=index)
         next_index = domain_list['property']['last'][0] + 1
         if domain_list['property']['total'][0] < next_index:
             return domain_list['property']['domain'] if 'domain' in domain_list['property'] else []
         else:
-            time.sleep(1)
+            # According to RRPProxy (https://wiki.rrpproxy.net/api/epp-server/frequently-asked-questions )
+            # there is a rate limit of 1 command per second, therefore I added time.sleep as a parameter so
+            # we can add any custom delay between calls case we want to
+            time.sleep(time_between_calls_in_seconds)
             return domain_list['property']['domain'] + self.get_domain_list_from_account(index=next_index)

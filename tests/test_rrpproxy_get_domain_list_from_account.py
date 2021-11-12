@@ -60,6 +60,28 @@ class TestGetDomainListFromAccount(TestRRPProxyBase):
 
         self.time_sleep_mock.assert_called_once_with(1)
 
+    def test_calls_sleep_with_correct_amount_of_seconds_if_time_between_calls_is_specified(self):
+        self.proxy.query_domain_list.side_effect = [
+            {
+                'property': {
+                    'last': [2],
+                    'total': [4],
+                    'domain': ['domain1.nl', 'domain2.nl']
+                }
+            },
+            {
+                'property': {
+                    'last': [4],
+                    'total': [4],
+                    'domain': ['domain3.nl', 'domain4.nl']
+                }
+            }
+        ]
+
+        self.proxy.get_domain_list_from_account(time_between_calls_in_seconds=5)
+
+        self.time_sleep_mock.assert_called_once_with(5)
+
     def test_returns_domain_list_and_a_recursive_call_with_another_index_when_there_are_more_domains_on_the_next_page(
             self):
         self.proxy.query_domain_list.side_effect = [
