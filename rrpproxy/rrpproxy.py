@@ -162,8 +162,9 @@ class RRPProxy:
     def get_domain_list_from_account(self, index=0, time_between_calls_in_seconds=1):
         """Returns list of domains registered in your account"""
         domain_list = self.query_domain_list(first=index)
-        next_index = domain_list['property']['last'][0] + 1
-        if domain_list['property']['total'][0] < next_index:
+        next_index = int(domain_list['property']['last'][0]) + 1
+        total_domains = int(domain_list['property']['total'][0])
+        if total_domains < next_index:
             return domain_list['property']['domain'] if 'domain' in domain_list['property'] else []
         else:
             # According to RRPProxy (https://wiki.rrpproxy.net/api/epp-server/frequently-asked-questions )

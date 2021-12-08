@@ -10,8 +10,8 @@ class TestGetDomainListFromAccount(TestRRPProxyBase):
         self.time_sleep_mock = self.set_up_patch('rrpproxy.rrpproxy.time.sleep')
         self.proxy.query_domain_list = Mock()
         self.proxy.query_domain_list.return_value = {'property': {
-                'last': [2],
-                'total': [2],
+                'last': ['2'],
+                'total': ['2'],
                 'domain': ['domain1.nl', 'domain2.nl']
         }}
 
@@ -29,8 +29,8 @@ class TestGetDomainListFromAccount(TestRRPProxyBase):
     def test_returns_empty_array_when_there_are_no_more_items_on_the_next_page_and_domain_list_is_absent(self):
         self.proxy.query_domain_list.return_value = {
             'property': {
-                'last': [201],
-                'total': [200],
+                'last': ['201'],
+                'total': ['200'],
             }
         }
 
@@ -42,16 +42,16 @@ class TestGetDomainListFromAccount(TestRRPProxyBase):
         self.proxy.query_domain_list.side_effect = [
             {
                 'property': {
-                    'last': [2],
-                    'total': [4],
+                    'last': ['2'],
+                    'total': ['4'],
                     'domain': ['domain1.nl', 'domain2.nl']
                 }
             },
             {
                 'property': {
-                    'last': [4],
-                    'total': [4],
-                    'domain': ['domain3.nl', 'domain4.nl']
+                    'last': ['4'],
+                    'total': ['4'],
+                    'domain': ['domZain3.nl', 'domain4.nl']
                 }
             }
         ]
@@ -64,15 +64,15 @@ class TestGetDomainListFromAccount(TestRRPProxyBase):
         self.proxy.query_domain_list.side_effect = [
             {
                 'property': {
-                    'last': [2],
-                    'total': [4],
+                    'last': ['2'],
+                    'total': ['4'],
                     'domain': ['domain1.nl', 'domain2.nl']
                 }
             },
             {
                 'property': {
-                    'last': [4],
-                    'total': [4],
+                    'last': ['4'],
+                    'total': ['4'],
                     'domain': ['domain3.nl', 'domain4.nl']
                 }
             }
@@ -87,15 +87,15 @@ class TestGetDomainListFromAccount(TestRRPProxyBase):
         self.proxy.query_domain_list.side_effect = [
             {
                 'property': {
-                    'last': [2],
-                    'total': [4],
+                    'last': ['2'],
+                    'total': ['4'],
                     'domain': ['domain1.nl', 'domain2.nl']
                 }
             },
             {
                 'property': {
-                    'last': [4],
-                    'total': [4],
+                    'last': ['4'],
+                    'total': ['4'],
                     'domain': ['domain3.nl', 'domain4.nl']
                 }
             }
