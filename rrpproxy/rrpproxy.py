@@ -3,6 +3,7 @@ import re
 import requests
 import time
 
+from rrpproxy.utils.populate_domain_list import populate_domain_list
 from rrpproxy.utils.rrp_proxy_internal_status_exception import RRPProxyInternalStatusException
 from rrpproxy.utils.rrpproxy_api_down_exception import RRPProxyAPIDownException
 
@@ -159,16 +160,36 @@ class RRPProxy:
         """Query list of activated zones in account"""
         return self.call('QueryZoneList')
 
-    def get_domain_list_from_account(self, index=0, time_between_calls_in_seconds=1):
+    def get_domain_list_from_account(self, **kwargs):
         """Returns list of domains registered in your account"""
-        domain_list = self.query_domain_list(first=index)
+        domain_list = self.get_last_updated_domains_with_details(retrieve_all=True, **kwargs)
+
+        return [domain['name'] for domain in domain_list]
+
+    def get_last_updated_domains_with_details(self, index=0, retrieve_all=False, time_between_calls_in_seconds=1,
+                                              **kwargs):
+        """
+        Returns list of domains registered in your account with domain name, status, update_date,
+        nameservers, admin_contact, tech_contact, billing_contact and owner_contact
+
+        :param int index: Start results from this item
+        :param bool retrieve_all: Setting this to true will return all domains in the account, otherwise
+        this function will return the last 1000 updated domains
+        :param int time_between_calls_in_seconds: Custom delay in seconds between calls
+        """
+        domain_list = self.query_domain_list(first=index, type='ALL', orderby='DOMAINUPDATEDDATE', order='DESC',
+                                             **kwargs)
+
         next_index = int(domain_list['property']['last'][0]) + 1
         total_domains = int(domain_list['property']['total'][0])
-        if total_domains < next_index:
-            return domain_list['property']['domain'] if 'domain' in domain_list['property'] else []
+
+        if not retrieve_all or total_domains < next_index:
+            return populate_domain_list(domain_list) if 'domain' in domain_list['property'] else []
         else:
             # According to RRPProxy (https://wiki.rrpproxy.net/api/epp-server/frequently-asked-questions )
             # there is a rate limit of 1 command per second, therefore I added time.sleep as a parameter so
             # we can add any custom delay between calls case we want to
             time.sleep(time_between_calls_in_seconds)
-            return domain_list['property']['domain'] + self.get_domain_list_from_account(index=next_index)
+            return (populate_domain_list(domain_list) + self.get_last_updated_domains_with_details(
+                index=next_index, retrieve_all=retrieve_all,
+                time_between_calls_in_seconds=time_between_calls_in_seconds, **kwargs))
