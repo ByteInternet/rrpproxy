@@ -1,23 +1,24 @@
 
 def populate_domain_list(domains_in_rrpproxy_format):
     domain_list = []
-    for key, domain in enumerate(domains_in_rrpproxy_format['property']['domain']):
+    properties = domains_in_rrpproxy_format['property']
+    for index in range(len(properties['domain'])):
         domain_with_details = {
-            'name': domains_in_rrpproxy_format['property']['domain'][key],
-            'status': domains_in_rrpproxy_format['property']['domain status'][key],
-            'updated_date': domains_in_rrpproxy_format['property']['domain updated date'][key],
+            'name': properties['domain'][index],
+            'status': properties['domain status'][index],
+            'updated_date': properties['domain updated date'][index],
         }
 
-        if domains_in_rrpproxy_format['property']['nameserver'][key]:
-            domain_with_details['nameserver'] = domains_in_rrpproxy_format['property']['nameserver'][key]
-        if domains_in_rrpproxy_format['property']['admincontact'][key]:
-            domain_with_details['admin_contact'] = domains_in_rrpproxy_format['property']['admincontact'][key]
-        if domains_in_rrpproxy_format['property']['techcontact'][key]:
-            domain_with_details['tech_contact'] = domains_in_rrpproxy_format['property']['techcontact'][key]
-        if domains_in_rrpproxy_format['property']['billingcontact'][key]:
-            domain_with_details['billing_contact'] = domains_in_rrpproxy_format['property']['billingcontact'][key]
-        if domains_in_rrpproxy_format['property']['ownercontact'][key]:
-            domain_with_details['owner_contact'] = domains_in_rrpproxy_format['property']['ownercontact'][key]
+        if properties['nameserver'][index]:
+            domain_with_details['nameserver'] = properties['nameserver'][index]
+        if properties['admincontact'][index]:
+            domain_with_details['admin_contact'] = properties['admincontact'][index]
+        if properties['techcontact'][index]:
+            domain_with_details['tech_contact'] = properties['techcontact'][index]
+        if properties['billingcontact'][index]:
+            domain_with_details['billing_contact'] = properties['billingcontact'][index]
+        if properties['ownercontact'][index]:
+            domain_with_details['owner_contact'] = properties['ownercontact'][index]
 
         domain_list.append(domain_with_details)
 

@@ -175,7 +175,7 @@ class RRPProxy:
         :param int index: Start results from this item
         :param bool retrieve_all: Setting this to true will return all domains in the account, otherwise
         this function will return the last 1000 updated domains
-        :param int time_between_calls_in_seconds: Custom delay in seconds between calls
+        :param int time_between_calls_in_seconds: Custom delay in seconds between API calls
         """
         domain_list = self.query_domain_list(first=index, type='ALL', orderby='DOMAINUPDATEDDATE', order='DESC',
                                              **kwargs)

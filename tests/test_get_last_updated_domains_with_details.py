@@ -20,6 +20,12 @@ class TestGetLastUpdatedDomainsWithDetails(TestRRPProxyBase):
         self.proxy.query_domain_list.assert_called_once_with(first=index, type='ALL', orderby='DOMAINUPDATEDDATE',
                                                              order='DESC')
 
+    def test_calls_query_domain_list_correctly_with_kwargs(self):
+        self.proxy.get_last_updated_domains_with_details(one_keyword='one_value')
+
+        self.proxy.query_domain_list.assert_called_once_with(first=0, type='ALL', orderby='DOMAINUPDATEDDATE',
+                                                             order='DESC', one_keyword='one_value')
+
     @patch('rrpproxy.rrpproxy.populate_domain_list')
     def test_calls_query_domain_list_once_if_retrieve_all_is_set_to_false(self, _):
         self.proxy.query_domain_list.side_effect = [
@@ -34,7 +40,7 @@ class TestGetLastUpdatedDomainsWithDetails(TestRRPProxyBase):
                 'property': {
                     'last': ['4'],
                     'total': ['4'],
-                    'domain': ['domZain3.nl', 'domain4.nl']
+                    'domain': ['domain3.nl', 'domain4.nl']
                 }
             }
         ]
@@ -57,7 +63,7 @@ class TestGetLastUpdatedDomainsWithDetails(TestRRPProxyBase):
                 'property': {
                     'last': ['4'],
                     'total': ['4'],
-                    'domain': ['domZain3.nl', 'domain4.nl']
+                    'domain': ['domain3.nl', 'domain4.nl']
                 }
             }
         ]
@@ -100,7 +106,7 @@ class TestGetLastUpdatedDomainsWithDetails(TestRRPProxyBase):
                 'property': {
                     'last': ['4'],
                     'total': ['4'],
-                    'domain': ['domZain3.nl', 'domain4.nl']
+                    'domain': ['domain3.nl', 'domain4.nl']
                 }
             }
         ]
