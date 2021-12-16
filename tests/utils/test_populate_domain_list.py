@@ -4,8 +4,8 @@ from rrpproxy.utils.populate_domain_list import populate_domain_list
 
 
 class TestPopulateDomainList(TestCase):
-    def test_returns_data_in_the_correct_format(self):
-        rrpproxy_output_data = {
+    def setUp(self):
+        self.rrpproxy_output_data = {
             'property': {
                 'domain': ['domain1.nl', 'domain2.nl', 'domain3.nl'],
                 'domain status': ['ACTIVE', 'INACTIVE', 'ACTIVE'],
@@ -18,9 +18,9 @@ class TestPopulateDomainList(TestCase):
             }
         }
 
-        domain_list = populate_domain_list(rrpproxy_output_data)
+    def test_returns_data_in_the_correct_format(self):
+        domain_list = populate_domain_list(self.rrpproxy_output_data)
 
-        self.assertEqual(len(domain_list), len(rrpproxy_output_data['property']['domain']))
         self.assertEqual(domain_list, [
             {'name': 'domain1.nl', 'status': 'ACTIVE', 'updated_date': '2018-06-12 16:59:00',
              'nameserver': 'dummy1;dummy;dummy', 'admin_contact': 'admin1', 'tech_contact': 'tech1',
@@ -32,3 +32,38 @@ class TestPopulateDomainList(TestCase):
              'nameserver': 'dummy3;dummy;dummy', 'admin_contact': 'admin3', 'tech_contact': 'tech3',
              'billing_contact': 'billing3', 'owner_contact': 'owner3'},
         ])
+
+    def test_returns_data_without_nameserver_if_empty(self):
+        self.rrpproxy_output_data['property']['nameserver'][0] = ''
+
+        domain_list = populate_domain_list(self.rrpproxy_output_data)
+
+        self.assertNotIn('nameserver', domain_list[0])
+
+    def test_returns_data_without_admin_contact_if_empty(self):
+        self.rrpproxy_output_data['property']['admincontact'][0] = ''
+
+        domain_list = populate_domain_list(self.rrpproxy_output_data)
+
+        self.assertNotIn('admin_contact', domain_list[0])
+
+    def test_returns_data_without_tech_contact_if_empty(self):
+        self.rrpproxy_output_data['property']['techcontact'][0] = ''
+
+        domain_list = populate_domain_list(self.rrpproxy_output_data)
+
+        self.assertNotIn('tech_contact', domain_list[0])
+
+    def test_returns_data_without_billing_contact_if_empty(self):
+        self.rrpproxy_output_data['property']['billingcontact'][0] = ''
+
+        domain_list = populate_domain_list(self.rrpproxy_output_data)
+
+        self.assertNotIn('billing_contact', domain_list[0])
+
+    def test_returns_data_without_owner_contact_if_empty(self):
+        self.rrpproxy_output_data['property']['ownercontact'][0] = ''
+
+        domain_list = populate_domain_list(self.rrpproxy_output_data)
+
+        self.assertNotIn('owner_contact', domain_list[0])
