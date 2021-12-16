@@ -164,7 +164,7 @@ class RRPProxy:
         """Returns list of domains registered in your account"""
         domain_list = self.get_last_updated_domains_with_details(retrieve_all=True, **kwargs)
 
-        return [domain['name'] for domain in domain_list]
+        return [domain['domain'] for domain in domain_list]
 
     def get_last_updated_domains_with_details(self, index=0, retrieve_all=False, time_between_calls_in_seconds=1,
                                               **kwargs):
