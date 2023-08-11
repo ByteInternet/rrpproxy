@@ -20,6 +20,7 @@ class TestRRPProxyGetDomainWithDetails(TestRRPProxyBase):
                 'techcontact': ['CNT-123'],
                 'billingcontact': ['CNT-123'],
                 'ownercontact': ['CNT-123'],
+                'total': '1'
             }
         }
         self.proxy.query_domain_list.return_value = self.query_domain_list_data
@@ -33,3 +34,9 @@ class TestRRPProxyGetDomainWithDetails(TestRRPProxyBase):
         res = self.proxy.get_domain_with_details(self.domain)
 
         self.assertEqual(res, populate_domain_list(self.query_domain_list_data))
+
+    def test_returns_empty_list_if_domain_not_found(self):
+        self.proxy.query_domain_list.return_value = {'property': {'total': '0'}}
+        res = self.proxy.get_domain_with_details(self.domain)
+
+        self.assertEqual(res, [])

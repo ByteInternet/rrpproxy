@@ -202,5 +202,7 @@ class RRPProxy:
         :param str domain: Domain to fetch data of
         """
         domain_list = self.query_domain_list(domain=domain, type='ALL')
+        if int(domain_list['property']['total'][0]) == 0:
+            return []
 
         return populate_domain_list(domain_list)
