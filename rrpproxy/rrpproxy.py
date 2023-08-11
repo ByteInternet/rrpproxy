@@ -193,3 +193,16 @@ class RRPProxy:
             return (populate_domain_list(domain_list) + self.get_last_updated_domains_with_details(
                 index=next_index, retrieve_all=retrieve_all,
                 time_between_calls_in_seconds=time_between_calls_in_seconds, **kwargs))
+
+    def get_domain_with_details(self, domain):
+        """
+        Returns domain name, status, update_date, nameservers, admin_contact,
+        tech_contact, billing_contact and owner_contact of the given domain
+
+        :param str domain: Domain to fetch data of
+        """
+        domain_list = self.query_domain_list(domain=domain, type='ALL')
+        if int(domain_list['property']['total'][0]) == 0:
+            return []
+
+        return populate_domain_list(domain_list)
