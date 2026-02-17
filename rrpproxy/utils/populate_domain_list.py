@@ -1,6 +1,14 @@
-
-RRPPROXY_DOMAIN_FIELDS = ('domain', 'domain status', 'domain updated date', 'nameserver', 'admincontact',
-                          'techcontact', 'billingcontact', 'ownercontact')
+RRPPROXY_DOMAIN_FIELDS = (
+    "domain",
+    "domain status",
+    "domain updated date",
+    "nameserver",
+    "admincontact",
+    "techcontact",
+    "billingcontact",
+    "ownercontact",
+    "domain auth code",
+)
 
 
 def populate_domain_list(domains_in_rrpproxy_format):
@@ -15,11 +23,11 @@ def populate_domain_list(domains_in_rrpproxy_format):
     :rtype: list
     """
     domain_list = []
-    properties = domains_in_rrpproxy_format['property']
-    for index in range(len(properties['domain'])):
+    properties = domains_in_rrpproxy_format["property"]
+    for index in range(len(properties["domain"])):
         domain_with_details = {}
         for domain_field in RRPPROXY_DOMAIN_FIELDS:
-            if properties[domain_field][index]:
+            if domain_field in properties and properties[domain_field][index]:
                 domain_with_details[domain_field] = properties[domain_field][index]
 
         domain_list.append(domain_with_details)
